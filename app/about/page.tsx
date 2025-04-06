@@ -182,7 +182,7 @@ export default function AboutPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link href="https://github.com/username/crowdcast-ai" target="_blank" rel="noopener noreferrer">
+                <Link href="https://github.com/prajyots60/CrowdCastAI.git" target="_blank" rel="noopener noreferrer">
                   <div className="border rounded-lg p-4 hover:bg-muted transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                       <Github className="h-5 w-5" />

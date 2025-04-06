@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Output of Next.js build
+.next/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# dotenv environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Dependency locks (optional if using a single lock strategy)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Python artifacts (if using Python to run ML scripts locally)
+__pycache__/
+*.pyc
+*.pyo
+
+# ML model files (DON’T commit large `.pkl` files)
+*.pkl
+*.joblib
+
+# Uploads / backups / static exports
+public/uploads/
+public/models/
+venv/

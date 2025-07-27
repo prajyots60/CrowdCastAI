@@ -16,6 +16,8 @@ CrowdCast AI is an intelligent web application that leverages machine learning t
 ## 📂 Project Files
 
 👉 **[Google Drive Folder (Datasets, PPT, Report)](https://drive.google.com/drive/u/2/folders/1ywDV2XXGawEdQizpbKlUlxmQDdA20Uvj)**  
+👉 **[Google Drive Folder (CrowdCastAI)](https://drive.google.com/drive/folders/1VLmJW4bti1iX4d4lrpoKk9thl89h3VGL?usp=sharing)**  
+👉 **[Report (CrowdCastAI)](https://docs.google.com/document/d/16Ci4MfKORubG9gV2rMmuiyEDWMo6ZTBXTdev57v9VrE/edit?usp=sharing)** 
 👉 **[GitHub Repository](https://github.com/prajyots60/CrowdCastAI)**
 
 ---

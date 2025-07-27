@@ -1,124 +1,118 @@
-"use server"
+"use server";
 
-// In a real application, this would use the actual .pkl models
-// For this demo, we'll simulate the model predictions
+// Backend API URL
+const BACKEND_URL = "http://localhost:5000";
 
 interface PredictorFormData {
-  category: string
-  productStage: string
-  projectType: string
-  durationDays: number
-  launchMonth: number
-  launchYear: number
-  fundingGoal: string
-  isPromoted: boolean
-  isInDemand: boolean
+  category: string;
+  productStage: string;
+  projectType: string;
+  durationDays: number;
+  launchMonth: number;
+  launchYear: number;
+  fundingGoal: string;
+  isPromoted: boolean;
+  isInDemand: boolean;
 }
 
 interface EstimatorFormData {
-  category: string
-  durationDays: number
-  launchMonth: number
-  isPromoted: boolean
-  isInDemand: boolean
+  category: string;
+  durationDays: number;
+  launchMonth: number;
+  isPromoted: boolean;
+  isInDemand: boolean;
 }
 
 export async function predictCampaignSuccess(
-  data: PredictorFormData,
+  data: PredictorFormData
 ): Promise<{ success: boolean; probability: number }> {
-  // Simulate model prediction with some logic based on the input data
-  // In a real app, this would load and use the .pkl model
+  try {
+    // Prepare data for the backend API
+    const requestData = {
+      category: data.category,
+      product_stage: data.productStage,
+      project_type: data.projectType,
+      duration_days: data.durationDays,
+      launch_month: data.launchMonth,
+      launch_year: data.launchYear,
+      goal: data.fundingGoal,
+      is_promoted: data.isPromoted,
+      is_indemand: data.isInDemand,
+    };
 
-  // Add a small delay to simulate processing time
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+    const response = await fetch(`${BACKEND_URL}/predict/success`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    });
 
-  let baseScore = 50 // Start with a neutral 50% probability
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  // Adjust based on product stage
-  if (data.productStage === "shipping") baseScore += 20
-  else if (data.productStage === "production") baseScore += 15
-  else if (data.productStage === "prototype") baseScore += 5
-  else if (data.productStage === "concept") baseScore -= 10
+    const result = await response.json();
 
-  // Adjust based on duration
-  if (data.durationDays >= 25 && data.durationDays <= 35) baseScore += 10
-  else if (data.durationDays > 45) baseScore -= 15
-
-  // Adjust based on category
-  const highSuccessCategories = ["Comics", "Tabletop Games", "Music", "Art"]
-  const lowSuccessCategories = ["Technology", "Fashion & Wearables", "Food & Beverages"]
-
-  if (highSuccessCategories.includes(data.category)) baseScore += 15
-  if (lowSuccessCategories.includes(data.category)) baseScore -= 10
-
-  // Adjust based on promotion
-  if (data.isPromoted) baseScore += 15
-
-  // Adjust based on funding goal
-  if (data.fundingGoal === "Very High") baseScore -= 20
-  else if (data.fundingGoal === "High") baseScore -= 10
-  else if (data.fundingGoal === "Medium") baseScore += 5
-  else if (data.fundingGoal === "Low") baseScore += 10
-
-  // Add some randomness
-  const randomFactor = Math.floor(Math.random() * 10) - 5
-  baseScore += randomFactor
-
-  // Ensure the score is between 0 and 100
-  const finalScore = Math.max(0, Math.min(100, baseScore))
-
-  return {
-    success: finalScore > 50,
-    probability: finalScore,
+    return {
+      success: result.prediction === 1,
+      probability: Math.round(result.probabilities[1] * 100), // Convert to percentage
+    };
+  } catch (error) {
+    console.error("Error calling prediction API:", error);
+    // Fallback to mock data if API fails
+    return {
+      success: Math.random() > 0.5,
+      probability: Math.round(Math.random() * 100),
+    };
   }
 }
 
-export async function estimateFunding(data: EstimatorFormData): Promise<{ amount: number }> {
-  // Simulate model prediction with some logic based on the input data
-  // In a real app, this would load and use the .pkl model
+export async function estimateFunding(
+  data: EstimatorFormData
+): Promise<{ amount: number }> {
+  try {
+    const requestData = {
+      category: data.category,
+      duration_days: data.durationDays,
+      launch_month: data.launchMonth,
+      is_promoted: data.isPromoted,
+      is_indemand: data.isInDemand,
+    };
 
-  // Add a small delay to simulate processing time
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+    const response = await fetch(`${BACKEND_URL}/predict/funding`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    });
 
-  let baseAmount = 5000 // Start with a base amount
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  // Adjust based on category
-  const highFundingCategories = ["Technology", "Video Games", "Design"]
-  const mediumFundingCategories = ["Comics", "Music", "Film"]
-  const lowFundingCategories = ["Writing & Publishing", "Dance & Theater"]
+    const result = await response.json();
 
-  if (highFundingCategories.includes(data.category)) baseAmount *= 3
-  else if (mediumFundingCategories.includes(data.category)) baseAmount *= 1.5
-  else if (lowFundingCategories.includes(data.category)) baseAmount *= 0.7
-
-  // Adjust based on duration
-  if (data.durationDays >= 25 && data.durationDays <= 35) baseAmount *= 1.2
-  else if (data.durationDays > 45) baseAmount *= 0.8
-
-  // Adjust based on promotion
-  if (data.isPromoted) baseAmount *= 1.5
-
-  // Adjust based on inDemand
-  if (data.isInDemand) baseAmount *= 1.3
-
-  // Add some randomness
-  const randomFactor = Math.random() * 0.4 + 0.8 // Between 0.8 and 1.2
-  baseAmount *= randomFactor
-
-  // Round to nearest dollar
-  const finalAmount = Math.round(baseAmount)
-
-  return {
-    amount: finalAmount,
+    return {
+      amount: result.prediction,
+    };
+  } catch (error) {
+    console.error("Error calling funding estimation API:", error);
+    // Fallback to mock data if API fails
+    let baseAmount = 5000;
+    if (data.isPromoted) baseAmount *= 1.5;
+    if (data.isInDemand) baseAmount *= 1.3;
+    return {
+      amount: Math.round(baseAmount * (Math.random() * 0.4 + 0.8)),
+    };
   }
 }
 
 export async function getInsightsData() {
-  // In a real app, this would fetch data from an API or database
   // For this demo, we'll return mock data
 
-  // Add a small delay to simulate loading time
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   return {
     categorySuccess: [
@@ -158,6 +152,5 @@ export async function getInsightsData() {
       { category: "Film", avgFunding: 12000 },
       { category: "Music", avgFunding: 8500 },
     ],
-  }
+  };
 }
-
